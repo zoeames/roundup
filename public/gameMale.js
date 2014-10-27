@@ -1,5 +1,5 @@
 var cursors;
-var gameState = {preload: preload, create: create, update: update};
+var gameMaleState = {preload: preload, create: create, update: update};
 var jumpButton;
 var platforms;
 var player;
@@ -10,7 +10,7 @@ function create(){
   game.physics.startSystem(Phaser.Physics.ARCADE);
   var playerbmd = game.add.bitmapData(32, 32);
   playerbmd.ctx.rect(0, 0, 32, 32);
-  playerbmd.ctx.fillStyle = "#0f0";
+  playerbmd.ctx.fillStyle = "#0040f8";
   playerbmd.ctx.fill();
 
   var enemybmd = game.add.bitmapData(32, 32);
