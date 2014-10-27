@@ -75,10 +75,7 @@ function create(){
 
   cursors = game.input.keyboard.createCursorKeys();
   jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-<<<<<<< HEAD
 
-
-=======
   game.time.events.loop(1000, function(){
     enemies.forEachAlive(function(e){
       e.body.velocity.x = 115 * Phaser.Math.randomSign();
@@ -94,7 +91,6 @@ function create(){
       e.body.velocity.y = 655 * Phaser.Math.randomSign();
     }, this);
   }, this);
->>>>>>> 826363417aba39fc7682a095a45f2ccb6bf5d991
 }
 
 function update(){
@@ -107,14 +103,11 @@ function update(){
   game.physics.arcade.overlap(player, enemies, enemyHit, null, this);
   game.physics.arcade.overlap(player, enemiez, enemy2Hit, null, this);
   movePlayer();
-<<<<<<< HEAD
 
   //timer
   updateTimer();
-=======
   enemies.forEachAlive(moveEnemies, this);
   enemiez.forEachAlive(moveEnemies, this);
->>>>>>> 826363417aba39fc7682a095a45f2ccb6bf5d991
 }
 
 function movePlayer(){
