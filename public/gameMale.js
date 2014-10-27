@@ -67,7 +67,7 @@ function create(){
   cursors = gameMaleState.input.keyboard.createCursorKeys();
   jumpButton = gameMaleState.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
-  timer = gameMaleState.add.text(0,0, '00:00:00');
+  timer = gameMaleState.add.text(0, 0, '00:00:00', {font:'50px Arial', fill:'#ffffff'});
   console.log(timer);
 
 }
