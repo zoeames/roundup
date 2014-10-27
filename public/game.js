@@ -3,13 +3,25 @@ var gameState = {preload: preload, create: create, update: update};
 var jumpButton;
 var platforms;
 var player;
-function preload(){}
+var ground;
+function preload(){
+  game.load.spritesheet('malePlayer', 'assets/mains/guyHero.png', 64, 64, 177);
+  game.load.spritesheet('femaleHero', 'assets/mains/ladyHero.png', 64, 64);
+  game.load.spritesheet('uglyGirl', 'assets/variants/fugly_female.png', 64, 64);
+  game.load.spritesheet('hotGirl', 'assets/variants/hot_female.png', 64, 64);
+  game.load.spritesheet('uglyGuy', 'assets/variants/uglyman.png', 64, 64);
+  game.load.spritesheet('hotGuy', 'assets/variants/hotguy.png', 64, 64);
+}
 function create(){
   game.physics.startSystem(Phaser.Physics.ARCADE);
-  var playerbmd = game.add.bitmapData(32, 32);
-  playerbmd.ctx.rect(0, 0, 32, 32);
-  playerbmd.ctx.fillStyle = "#0f0";
-  playerbmd.ctx.fill();
+  //var playerbmd = game.add.bitmapData(32, 32);
+  //playerbmd.ctx.rect(0, 0, 32, 32);
+  //playerbmd.ctx.fillStyle = "#0f0";
+  //playerbmd.ctx.fill();
+  player = game.add.sprite(game.world.centerX, game.world.centerY, 'malePlayer');
+  player.animations.add('right', [117, 118, 119, 120, 121, 122, 123, 124, 125], 10, true);
+  player.animations.add('left', [143, 144, 145, 146, 147, 148, 149, 150, 151], 10, true);
+  player.animations.add('still', [130, 131, 132, 133, 134, 135, 136, 137, 138], 10, true);
 
   var enemybmd = game.add.bitmapData(32, 32);
   enemybmd.ctx.rect(0, 0, 32, 32);
@@ -21,7 +33,6 @@ function create(){
   platformbmd.ctx.fillStyle = "#f8a34b";
   platformbmd.ctx.fill();
 
-  player = game.add.sprite(game.world.centerX, game.world.centerY, playerbmd);
   game.physics.enable(player, Phaser.Physics.ARCADE);
   player.anchor.set(0.5, 0.5);
   player.body.collideWorldBounds = true;
@@ -65,17 +76,22 @@ function movePlayer(){
   if(cursors.left.isDown){
     player.scale.x = -1;
     player.body.velocity.x = -150;
+    player.animations.play('left');
     if(jumpButton.isDown && player.body.touching.down){
       player.body.velocity.y = -550;
       //jumpTimer = game.time.now + 750;
     }
   }else if(cursors.right.isDown){
     player.body.velocity.x = 150;
+    player.animations.play('right');
     if(jumpButton.isDown && player.body.touching.down){
       player.body.velocity.y = -550;
       //jumpTimer = game.time.now + 750;
     }
   }else if(jumpButton.isDown && player.body.touching.down){
     player.body.velocity.y = -550;
+  }else{
+    player.animations.stop();
+    player.frame = 78;
   }
 }
