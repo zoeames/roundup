@@ -11,6 +11,13 @@ function preload(){
   game.load.image('star', 'star-blood.png');
 }
 
+//timer variabes
+var timer;
+var milliseconds = 0;
+var seconds = 0;
+var minutes = 0;
+
+
 function create(){
   game.physics.startSystem(Phaser.Physics.ARCADE);
 
@@ -75,10 +82,7 @@ function create(){
 
   cursors = game.input.keyboard.createCursorKeys();
   jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-<<<<<<< HEAD
 
-
-=======
   game.time.events.loop(1000, function(){
     enemies.forEachAlive(function(e){
       e.body.velocity.x = 115 * Phaser.Math.randomSign();
@@ -94,7 +98,10 @@ function create(){
       e.body.velocity.y = 655 * Phaser.Math.randomSign();
     }, this);
   }, this);
->>>>>>> 826363417aba39fc7682a095a45f2ccb6bf5d991
+
+  timer = gameMaleState.add.text(0,0, '00:00:00');
+  console.log(timer);
+
 }
 
 function update(){
@@ -107,14 +114,13 @@ function update(){
   game.physics.arcade.overlap(player, enemies, enemyHit, null, this);
   game.physics.arcade.overlap(player, enemiez, enemy2Hit, null, this);
   movePlayer();
-<<<<<<< HEAD
+
+  enemies.forEachAlive(moveEnemies, this);
+  enemiez.forEachAlive(moveEnemies, this);
 
   //timer
   updateTimer();
-=======
-  enemies.forEachAlive(moveEnemies, this);
-  enemiez.forEachAlive(moveEnemies, this);
->>>>>>> 826363417aba39fc7682a095a45f2ccb6bf5d991
+
 }
 
 function movePlayer(){
@@ -150,6 +156,7 @@ function moveEnemies(enemy){
     enemy.body.velocity.x = 115;
   }
 }
+
 function enemyHit(player, enemy){
   var x = enemy.x + 80;
   var y = enemy.y;
@@ -168,4 +175,29 @@ function enemy2Hit(player, enemy){
   emitter.x = enemy.x;
   emitter.y = enemy.y;
   emitter.start(true, 600, null, 15);
+}
+
+//timer
+function updateTimer() {
+
+    minutes = Math.floor(gameMaleState.time.time / 60000) % 60;
+
+    seconds = Math.floor(gameMaleState.time.time / 1000) % 60;
+
+    milliseconds = Math.floor(gameMaleState.time.time) % 100;
+
+    //If any of the digits becomes a single digit number, pad it with a zero
+    if (milliseconds < 10)
+        milliseconds = '0' + milliseconds;
+
+    if (seconds < 10)
+        seconds = '0' + seconds;
+
+    if (minutes < 10)
+        minutes = '0' + minutes;
+
+    console.log(timer);
+
+    timer.setText(minutes + ':'+ seconds + ':' + milliseconds);
+
 }

@@ -1,14 +1,16 @@
 var cursors;
+var emitter;
 var gameMaleState = {preload: preload, create: create, update: update};
 var jumpButton;
 var platforms;
 var player;
 
 
-
+var score = 0;
 function preload(){
-
+  game.load.image('star', 'star-blood.png');
 }
+
 //timer variabes
 var timer;
 var milliseconds = 0;
@@ -16,31 +18,36 @@ var seconds = 0;
 var minutes = 0;
 
 
-
 function create(){
-  gameMaleState.physics.startSystem(Phaser.Physics.ARCADE);
+  game.physics.startSystem(Phaser.Physics.ARCADE);
 
-  var playerbmd = gameMaleState.add.bitmapData(32, 32);
+  var playerbmd = game.add.bitmapData(32, 32);
   playerbmd.ctx.rect(0, 0, 32, 32);
   playerbmd.ctx.fillStyle = "#0f0";
   playerbmd.ctx.fill();
 
-  var enemybmd = gameMaleState.add.bitmapData(32, 32);
+  var enemybmd = game.add.bitmapData(32, 32);
   enemybmd.ctx.rect(0, 0, 32, 32);
   enemybmd.ctx.fillStyle = "#ada";
   enemybmd.ctx.fill();
 
-  var platformbmd = gameMaleState.add.bitmapData(80, 16);
+  var enemy2bmd = game.add.bitmapData(32, 32);
+  enemy2bmd.ctx.rect(0, 0, 32, 32);
+  enemy2bmd.ctx.fillStyle = "#fd2";
+  enemy2bmd.ctx.fill();
+
+  var platformbmd = game.add.bitmapData(80, 16);
   platformbmd.ctx.rect(0, 0, 80, 16);
   platformbmd.ctx.fillStyle = "#f8a34b";
   platformbmd.ctx.fill();
 
-  player = gameMaleState.add.sprite(gameMaleState.world.centerX, gameMaleState.world.centerY, playerbmd);
-  gameMaleState.physics.enable(player, Phaser.Physics.ARCADE);
+  player = game.add.sprite(game.world.centerX, game.world.centerY, playerbmd);
+  game.physics.enable(player, Phaser.Physics.ARCADE);
   player.anchor.set(0.5, 0.5);
-  player.body.collideWorldBounds = true;
+  //player.body.collideWorldBounds = true;
   player.body.gravity.y = 900;
-  platforms = gameMaleState.add.group();
+  game.world.wrap(player);
+  platforms = game.add.group();
   platforms.enableBody = true;
   platforms.physicsBodyType = Phaser.Physics.ARCADE;
   platforms.createMultiple(7, platformbmd);
@@ -50,10 +57,10 @@ function create(){
     p.reset(x, y);
     p.body.immovable = true;
   }, this);
-  ground = platforms.create(0, gameMaleState.world.height - 64, platformbmd);
+  ground = platforms.create(0, game.world.height - 64, platformbmd);
   ground.scale.setTo(12, 4);
   ground.body.immovable = true;
-  enemies = gameMaleState.add.group();
+  enemies = game.add.group();
   enemies.enableBody = true;
   enemies.physicsBodyType = Phaser.Physics.ARCADE;
   enemies.createMultiple(6, enemybmd);
@@ -61,57 +68,123 @@ function create(){
     var x = Math.floor(Math.random()*720) + 1;
     var y = Math.floor(Math.random()*472) + 128;
     e.reset(x, y);
-    e.body.collideWorldBounds  = true;
     e.body.gravity.y = 900;
   }, this);
-  cursors = gameMaleState.input.keyboard.createCursorKeys();
-  jumpButton = gameMaleState.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+  enemiez = game.add.group();
+  enemiez.enableBody = true;
+  enemiez.physicsBodyType = Phaser.Physics.ARCADE;
+  enemiez.createMultiple(6, enemy2bmd);
+  emitter = game.add.emitter(0, 0, 15);
+  emitter.makeParticles('star');
+  emitter.setYSpeed(-150, 150);
+  emitter.setXSpeed(-150, 150);
+  emitter.gravity = 0;
 
-  timer = gameMaleState.add.text(0,0, '00:00:00');
+  cursors = game.input.keyboard.createCursorKeys();
+  jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+
+  game.time.events.loop(1000, function(){
+    enemies.forEachAlive(function(e){
+      e.body.velocity.x = 115 * Phaser.Math.randomSign();
+    }, this);
+  }, this);
+  game.time.events.loop(1000, function(){
+    enemiez.forEachAlive(function(e){
+      e.body.velocity.x = 115 * Phaser.Math.randomSign();
+    }, this);
+  }, this);
+  game.time.events.loop(1500, function(){
+    enemiez.forEachAlive(function(e){
+      e.body.velocity.y = 655 * Phaser.Math.randomSign();
+    }, this);
+  }, this);
+
+  timer = game.add.text(0,0, '00:00:00', {font: '40px Arial', fill:'#ffffff'});
   console.log(timer);
 
 }
 
 function update(){
-  gameMaleState.physics.arcade.collide(player, ground);
-  gameMaleState.physics.arcade.collide(player, platforms);
-  gameMaleState.physics.arcade.collide(enemies, ground);
-  gameMaleState.physics.arcade.collide(enemies, platforms);
+  game.physics.arcade.collide(player, ground);
+  game.physics.arcade.collide(player, platforms);
+  game.physics.arcade.collide(enemies, ground);
+  game.physics.arcade.collide(enemies, platforms);
+  game.physics.arcade.collide(enemiez, ground);
+  game.physics.arcade.collide(enemiez, platforms);
+  game.physics.arcade.overlap(player, enemies, enemyHit, null, this);
+  game.physics.arcade.overlap(player, enemiez, enemy2Hit, null, this);
   movePlayer();
+
+  enemies.forEachAlive(moveEnemies, this);
+  enemiez.forEachAlive(moveEnemies, this);
 
   //timer
   updateTimer();
+
 }
 
 function movePlayer(){
+  if(player.x > 800){
+    player.x = 16;
+  }else if(player.x < 0){
+    player.x = 784;
+  }
   player.body.velocity.x = 0;
   if(cursors.left.isDown){
-    player.scale.x = -1;
     player.body.velocity.x = -150;
     if(jumpButton.isDown && player.body.touching.down){
       player.body.velocity.y = -550;
-      //jumpTimer = gameMaleState.time.now + 750;
     }
   }else if(cursors.right.isDown){
     player.body.velocity.x = 150;
     if(jumpButton.isDown && player.body.touching.down){
       player.body.velocity.y = -550;
-      //jumpTimer = gameMaleState.time.now + 750;
     }
   }else if(jumpButton.isDown && player.body.touching.down){
     player.body.velocity.y = -550;
   }
 }
+function moveEnemies(enemy){
+  if(enemy.x > 800){
+    enemy.x = 16;
+  }else if(enemy.x < 0){
+    enemy.x = 784;
+  }
+  if(player.body.velocity.x < 0){
+    enemy.body.velocity.x = -115;
+  }else if(player.body.velocity.x > 0){
+    enemy.body.velocity.x = 115;
+  }
+}
 
+function enemyHit(player, enemy){
+  var x = enemy.x + 80;
+  var y = enemy.y;
+  enemy.kill();
+  score += 20;
+  emitter.x = enemy.x;
+  emitter.y = enemy.y;
+  emitter.start(true, 600, null, 15);
+  var z = enemiez.getFirstDead();
+  z.reset(x, y);
+  z.body.gravity.y = 900;
+}
+function enemy2Hit(player, enemy){
+  enemy.kill();
+  score += 40;
+  emitter.x = enemy.x;
+  emitter.y = enemy.y;
+  emitter.start(true, 600, null, 15);
+}
 
 //timer
 function updateTimer() {
 
-    minutes = Math.floor(gameMaleState.time.time / 60000) % 60;
+    minutes = Math.floor(game.time.time / 60000) % 60;
 
-    seconds = Math.floor(gameMaleState.time.time / 1000) % 60;
+    seconds = Math.floor(game.time.time / 1000) % 60;
 
-    milliseconds = Math.floor(gameMaleState.time.time) % 100;
+    milliseconds = Math.floor(game.time.time) % 100;
 
     //If any of the digits becomes a single digit number, pad it with a zero
     if (milliseconds < 10)
