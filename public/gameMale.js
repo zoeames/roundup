@@ -4,31 +4,43 @@ var jumpButton;
 var platforms;
 var player;
 
-function preload(){}
+
+
+function preload(){
+
+}
+//timer variabes
+var timer;
+var milliseconds = 0;
+var seconds = 0;
+var minutes = 0;
+
+
 
 function create(){
-  game.physics.startSystem(Phaser.Physics.ARCADE);
-  var playerbmd = game.add.bitmapData(32, 32);
+  gameMaleState.physics.startSystem(Phaser.Physics.ARCADE);
+
+  var playerbmd = gameMaleState.add.bitmapData(32, 32);
   playerbmd.ctx.rect(0, 0, 32, 32);
-  playerbmd.ctx.fillStyle = "#0040f8";
+  playerbmd.ctx.fillStyle = "#0f0";
   playerbmd.ctx.fill();
 
-  var enemybmd = game.add.bitmapData(32, 32);
+  var enemybmd = gameMaleState.add.bitmapData(32, 32);
   enemybmd.ctx.rect(0, 0, 32, 32);
   enemybmd.ctx.fillStyle = "#ada";
   enemybmd.ctx.fill();
 
-  var platformbmd = game.add.bitmapData(80, 16);
+  var platformbmd = gameMaleState.add.bitmapData(80, 16);
   platformbmd.ctx.rect(0, 0, 80, 16);
   platformbmd.ctx.fillStyle = "#f8a34b";
   platformbmd.ctx.fill();
 
-  player = game.add.sprite(game.world.centerX, game.world.centerY, playerbmd);
-  game.physics.enable(player, Phaser.Physics.ARCADE);
+  player = gameMaleState.add.sprite(gameMaleState.world.centerX, gameMaleState.world.centerY, playerbmd);
+  gameMaleState.physics.enable(player, Phaser.Physics.ARCADE);
   player.anchor.set(0.5, 0.5);
   player.body.collideWorldBounds = true;
   player.body.gravity.y = 900;
-  platforms = game.add.group();
+  platforms = gameMaleState.add.group();
   platforms.enableBody = true;
   platforms.physicsBodyType = Phaser.Physics.ARCADE;
   platforms.createMultiple(7, platformbmd);
@@ -38,10 +50,10 @@ function create(){
     p.reset(x, y);
     p.body.immovable = true;
   }, this);
-  ground = platforms.create(0, game.world.height - 64, platformbmd);
+  ground = platforms.create(0, gameMaleState.world.height - 64, platformbmd);
   ground.scale.setTo(12, 4);
   ground.body.immovable = true;
-  enemies = game.add.group();
+  enemies = gameMaleState.add.group();
   enemies.enableBody = true;
   enemies.physicsBodyType = Phaser.Physics.ARCADE;
   enemies.createMultiple(6, enemybmd);
@@ -52,16 +64,23 @@ function create(){
     e.body.collideWorldBounds  = true;
     e.body.gravity.y = 900;
   }, this);
-  cursors = game.input.keyboard.createCursorKeys();
-  jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+  cursors = gameMaleState.input.keyboard.createCursorKeys();
+  jumpButton = gameMaleState.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+
+  timer = gameMaleState.add.text(0,0, '00:00:00');
+  console.log(timer);
+
 }
 
 function update(){
-  game.physics.arcade.collide(player, ground);
-  game.physics.arcade.collide(player, platforms);
-  game.physics.arcade.collide(enemies, ground);
-  game.physics.arcade.collide(enemies, platforms);
+  gameMaleState.physics.arcade.collide(player, ground);
+  gameMaleState.physics.arcade.collide(player, platforms);
+  gameMaleState.physics.arcade.collide(enemies, ground);
+  gameMaleState.physics.arcade.collide(enemies, platforms);
   movePlayer();
+
+  //timer
+  updateTimer();
 }
 
 function movePlayer(){
@@ -71,15 +90,41 @@ function movePlayer(){
     player.body.velocity.x = -150;
     if(jumpButton.isDown && player.body.touching.down){
       player.body.velocity.y = -550;
-      //jumpTimer = game.time.now + 750;
+      //jumpTimer = gameMaleState.time.now + 750;
     }
   }else if(cursors.right.isDown){
     player.body.velocity.x = 150;
     if(jumpButton.isDown && player.body.touching.down){
       player.body.velocity.y = -550;
-      //jumpTimer = game.time.now + 750;
+      //jumpTimer = gameMaleState.time.now + 750;
     }
   }else if(jumpButton.isDown && player.body.touching.down){
     player.body.velocity.y = -550;
   }
+}
+
+
+//timer
+function updateTimer() {
+
+    minutes = Math.floor(gameMaleState.time.time / 60000) % 60;
+
+    seconds = Math.floor(gameMaleState.time.time / 1000) % 60;
+
+    milliseconds = Math.floor(gameMaleState.time.time) % 100;
+
+    //If any of the digits becomes a single digit number, pad it with a zero
+    if (milliseconds < 10)
+        milliseconds = '0' + milliseconds;
+
+    if (seconds < 10)
+        seconds = '0' + seconds;
+
+    if (minutes < 10)
+        minutes = '0' + minutes;
+
+    console.log(timer);
+
+    timer.setText(minutes + ':'+ seconds + ':' + milliseconds);
+
 }

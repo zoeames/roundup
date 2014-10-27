@@ -4,7 +4,9 @@ var jumpButton;
 var platforms;
 var player;
 
-function preload(){}
+
+function preload(){
+}
 
 function create(){
   game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -54,6 +56,8 @@ function create(){
   }, this);
   cursors = game.input.keyboard.createCursorKeys();
   jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+
+
 }
 
 function update(){
@@ -62,6 +66,9 @@ function update(){
   game.physics.arcade.collide(enemies, ground);
   game.physics.arcade.collide(enemies, platforms);
   movePlayer();
+
+  //timer
+  updateTimer();
 }
 
 function movePlayer(){
