@@ -15,7 +15,7 @@ var positions2 = [{x:20, y:380}, {x: 500, y:380}, {x:20, y:450}, {x:200, y:450},
 
 
 function preload(){
-  game.load.image('star', 'star-blood.png');
+  game.load.image('peg', 'peg-blood.png');
   game.stage.backgroundColor = '#db12ff'
 }
 
@@ -74,7 +74,7 @@ function create(){
   enemiez.physicsBodyType = Phaser.Physics.ARCADE;
   enemiez.createMultiple(10, enemy2bmd);
   emitter = game.add.emitter(0, 0, 15);
-  emitter.makeParticles('star');
+  emitter.makeParticles('peg');
   emitter.setYSpeed(-150, 150);
   emitter.setXSpeed(-150, 150);
   emitter.gravity = 0;
