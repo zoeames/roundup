@@ -18,8 +18,8 @@ function preload(){
   game.load.image('peg', 'peg-blood.png');
   game.stage.backgroundColor = '#db12ff'
   game.load.spritesheet('femaleHero', 'assets/mains/ladyHero.png', 64, 64, 265);
-  game.load.spritesheet('uglyGuy', 'assets/variants/uglyman.png', 64, 64);
-  game.load.spritesheet('hotGuy', 'assets/variants/hotguy.png', 64, 64);
+  game.load.spritesheet('uglyGuy', 'assets/variants/uglyman.png', 64, 64, 265);
+  game.load.spritesheet('hotGuy', 'assets/variants/hotguy.png', 64, 64, 265);
 }
 
 function create(){
@@ -29,10 +29,7 @@ function create(){
   player.animations.add('right', [143, 144, 145, 146, 147, 148, 149, 150, 151], 10, true);
   player.animations.add('still', [130, 131, 132, 133, 134, 135, 136, 137, 138], 10, true);
 
-  var enemybmd = game.add.bitmapData(32, 32);
-  enemybmd.ctx.rect(0, 0, 32, 32);
-  enemybmd.ctx.fillStyle = "#ada";
-  enemybmd.ctx.fill();
+  var enemybmd = game.add.sprite(game.world.centerX, game.world.centerY, 'uglyGuy');
 
   var enemy2bmd = game.add.bitmapData(32, 32);
   enemy2bmd.ctx.rect(0, 0, 32, 32);
@@ -65,11 +62,11 @@ function create(){
   enemies.enableBody = true;
   enemies.physicsBodyType = Phaser.Physics.ARCADE;
   enemies.createMultiple(10, enemybmd);
-  positions2.forEach(function(p){
+  /*positions2.forEach(function(p){
     var enemy = enemies.getFirstDead();
     enemy.reset(p.x, p.y);
     enemy.body.gravity.y = 900;
-  }, this);
+  }, this);*/
   enemiez = game.add.group();
   enemiez.enableBody = true;
   enemiez.physicsBodyType = Phaser.Physics.ARCADE;
