@@ -4,26 +4,21 @@ var gameMaleState = {preload: preload, create: create, update: update};
 var jumpButton;
 var platforms;
 var player;
-
-
+var countDown = 30;
+var loop = null;
 var score = 0;
+var timer;
+
 function preload(){
   game.load.image('star', 'star-blood.png');
 }
-
-//timer variabes
-var timer;
-var milliseconds = 0;
-var seconds = 0;
-var minutes = 0;
-
 
 function create(){
   game.physics.startSystem(Phaser.Physics.ARCADE);
 
   var playerbmd = game.add.bitmapData(32, 32);
   playerbmd.ctx.rect(0, 0, 32, 32);
-  playerbmd.ctx.fillStyle = "#0f0";
+  playerbmd.ctx.fillStyle = "#ffffff";
   playerbmd.ctx.fill();
 
   var enemybmd = game.add.bitmapData(32, 32);
@@ -99,8 +94,9 @@ function create(){
     }, this);
   }, this);
 
-  timer = game.add.text(0,0, '00:00:00', {font: '40px Arial', fill:'#ffffff'});
+  timer = game.add.text(0,0, 'Time: ' + countDown + ' Score: ' + score, {font: '40px Arial', fill:'#ffffff'});
   console.log(timer);
+  game.time.events.loop(Phaser.Timer.MINUTE/60, updateCounter);
 
 }
 
@@ -118,9 +114,7 @@ function update(){
   enemies.forEachAlive(moveEnemies, this);
   enemiez.forEachAlive(moveEnemies, this);
 
-  //timer
-  updateTimer();
-
+  //time
 }
 
 function movePlayer(){
@@ -144,6 +138,7 @@ function movePlayer(){
     player.body.velocity.y = -550;
   }
 }
+
 function moveEnemies(enemy){
   if(enemy.x > 800){
     enemy.x = 16;
@@ -178,26 +173,16 @@ function enemy2Hit(player, enemy){
 }
 
 //timer
-function updateTimer() {
+function updateCounter() {
+  if(countDown === 1){
+    timer.setText('Time\'s up!');
+    gameOver();
+  } else {
+    countDown--;
+    timer.setText('Time: ' + countDown + ' Score: ' + score);
+  }
+}
 
-    minutes = Math.floor(game.time.time / 60000) % 60;
-
-    seconds = Math.floor(game.time.time / 1000) % 60;
-
-    milliseconds = Math.floor(game.time.time) % 100;
-
-    //If any of the digits becomes a single digit number, pad it with a zero
-    if (milliseconds < 10)
-        milliseconds = '0' + milliseconds;
-
-    if (seconds < 10)
-        seconds = '0' + seconds;
-
-    if (minutes < 10)
-        minutes = '0' + minutes;
-
-    console.log(timer);
-
-    timer.setText(minutes + ':'+ seconds + ':' + milliseconds);
-
+function gameOver() {
+  game.state.start('gameOver');
 }
