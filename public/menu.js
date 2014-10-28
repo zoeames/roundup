@@ -1,15 +1,18 @@
 var playerChoice = false;
+var yeah;
 var menuState = {preload: preload, create: create};
 
 function preload(){
   game.load.image('menuBg', '/assets/menu/menuBackground.png');
   game.load.image('Male', '/assets/menu/chooseMale.png');
-  game.load.image('Female', '/assets/menu/chooseFemale.png')
+  game.load.image('Female', '/assets/menu/chooseFemale.png');
+  game.load.audio('yeah', 'yeah.mp3')
 }
 
 function create(){
   game.add.sprite('0', '0', 'menuBg');
-
+  yeah = game.add.audio('yeah');
+  yeah.play();
   var buttonMale = game.add.button('20', '155', 'Male', maleChosen);
   var buttonFemale = game.add.button('420', '150', 'Female', femaleChosen);
 
