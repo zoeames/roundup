@@ -8,6 +8,10 @@ var countDown = 30;
 var loop = null;
 var score = 0;
 var timer;
+var positions  = [{x:0, y:410, sx:4, sy:1}, {x:480, y:410, sx:4, sy:1}, {x:0, y:275, sx:7, sy:1}, {x:80, y:140, sx:3, sy:4}, {x:640, y:140, sx:3, sy:4},
+                  {x:380, y:90, sx:2, sy:4}];
+var positions2 = [{x:20, y:380}, {x: 500, y:380}, {x:20, y:450}, {x:200, y:450}, {x:700, y:450}, {x:20, y:220}, {x:150, y:220}, {x:200, y:110},
+                  {x:500, y:60}, {x:700, y:100}];
 
 function preload(){
   game.load.image('star', 'star-blood.png');
@@ -39,18 +43,16 @@ function create(){
   player = game.add.sprite(game.world.centerX, game.world.centerY, playerbmd);
   game.physics.enable(player, Phaser.Physics.ARCADE);
   player.anchor.set(0.5, 0.5);
-  //player.body.collideWorldBounds = true;
   player.body.gravity.y = 900;
-  game.world.wrap(player);
   platforms = game.add.group();
   platforms.enableBody = true;
   platforms.physicsBodyType = Phaser.Physics.ARCADE;
-  platforms.createMultiple(7, platformbmd);
-  platforms.forEach(function(p){
-    var x = Math.floor(Math.random()*720) + 1;
-    var y = Math.floor(Math.random()*504) + 96;
-    p.reset(x, y);
-    p.body.immovable = true;
+  platforms.createMultiple(6, platformbmd);
+  positions.forEach(function(p){
+    platform = platforms.getFirstDead();
+    platform.reset(p.x, p.y);
+    platform.body.immovable = true;
+    platform.scale.setTo(p.sx, p.sy)
   }, this);
   ground = platforms.create(0, game.world.height - 64, platformbmd);
   ground.scale.setTo(12, 4);
@@ -58,17 +60,16 @@ function create(){
   enemies = game.add.group();
   enemies.enableBody = true;
   enemies.physicsBodyType = Phaser.Physics.ARCADE;
-  enemies.createMultiple(6, enemybmd);
-  enemies.forEach(function(e){
-    var x = Math.floor(Math.random()*720) + 1;
-    var y = Math.floor(Math.random()*472) + 128;
-    e.reset(x, y);
-    e.body.gravity.y = 900;
+  enemies.createMultiple(10, enemybmd);
+  positions2.forEach(function(p){
+    var enemy = enemies.getFirstDead();
+    enemy.reset(p.x, p.y);
+    enemy.body.gravity.y = 900;
   }, this);
   enemiez = game.add.group();
   enemiez.enableBody = true;
   enemiez.physicsBodyType = Phaser.Physics.ARCADE;
-  enemiez.createMultiple(6, enemy2bmd);
+  enemiez.createMultiple(10, enemy2bmd);
   emitter = game.add.emitter(0, 0, 15);
   emitter.makeParticles('star');
   emitter.setYSpeed(-150, 150);
@@ -98,6 +99,8 @@ function create(){
   console.log(timer);
   game.time.events.loop(Phaser.Timer.MINUTE/60, updateCounter);
 
+  //scoreText = game.add.text(700,0, '0', {font: '40px Arial', fill:'#ffffff'});
+
 }
 
 function update(){
@@ -114,7 +117,9 @@ function update(){
   enemies.forEachAlive(moveEnemies, this);
   enemiez.forEachAlive(moveEnemies, this);
 
-  //time
+
+  //updateScore();
+
 }
 
 function movePlayer(){
@@ -172,7 +177,6 @@ function enemy2Hit(player, enemy){
   emitter.start(true, 600, null, 15);
 }
 
-//timer
 function updateCounter() {
   if(countDown === 1){
     timer.setText('Time\'s up!');
@@ -186,3 +190,7 @@ function updateCounter() {
 function gameOver() {
   game.state.start('gameOver');
 }
+
+//function updateScore(){
+  //scoreText.setText(score);
+//}

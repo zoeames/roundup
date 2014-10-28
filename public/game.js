@@ -82,7 +82,6 @@ function create(){
 
   cursors = game.input.keyboard.createCursorKeys();
   jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-
   game.time.events.loop(1000, function(){
     enemies.forEachAlive(function(e){
       e.body.velocity.x = 115 * Phaser.Math.randomSign();
@@ -117,10 +116,6 @@ function update(){
 
   enemies.forEachAlive(moveEnemies, this);
   enemiez.forEachAlive(moveEnemies, this);
-
-  //timer
-  updateTimer();
-
 }
 
 function movePlayer(){
@@ -177,7 +172,7 @@ function enemy2Hit(player, enemy){
   emitter.start(true, 600, null, 15);
 }
 
-//timer
+
 function updateTimer() {
 
     minutes = Math.floor(gameMaleState.time.time / 60000) % 60;
