@@ -17,15 +17,17 @@ var positions2 = [{x:20, y:380}, {x: 500, y:380}, {x:20, y:450}, {x:200, y:450},
 function preload(){
   game.load.image('peg', 'peg-blood.png');
   game.stage.backgroundColor = '#db12ff'
+  game.load.spritesheet('femaleHero', 'assets/mains/ladyHero.png', 64, 64, 265);
+  game.load.spritesheet('uglyGuy', 'assets/variants/uglyman.png', 64, 64);
+  game.load.spritesheet('hotGuy', 'assets/variants/hotguy.png', 64, 64);
 }
 
 function create(){
   game.physics.startSystem(Phaser.Physics.ARCADE);
-
-  var playerbmd = game.add.bitmapData(32, 32);
-  playerbmd.ctx.rect(0, 0, 32, 32);
-  playerbmd.ctx.fillStyle = "#ffffff";
-  playerbmd.ctx.fill();
+  player = game.add.sprite(game.world.centerX, game.world.centerY, 'femaleHero');
+  player.animations.add('left', [117, 118, 119, 120, 121, 122, 123, 124, 125], 10, true);
+  player.animations.add('right', [143, 144, 145, 146, 147, 148, 149, 150, 151], 10, true);
+  player.animations.add('still', [130, 131, 132, 133, 134, 135, 136, 137, 138], 10, true);
 
   var enemybmd = game.add.bitmapData(32, 32);
   enemybmd.ctx.rect(0, 0, 32, 32);
@@ -42,7 +44,6 @@ function create(){
   platformbmd.ctx.fillStyle = "#01def8";
   platformbmd.ctx.fill();
 
-  player = game.add.sprite(game.world.centerX, game.world.centerY, playerbmd);
   game.physics.enable(player, Phaser.Physics.ARCADE);
   player.anchor.set(0.5, 0.5);
   //player.body.collideWorldBounds = true;
@@ -136,16 +137,20 @@ function movePlayer(){
   player.body.velocity.x = 0;
   if(cursors.left.isDown){
     player.body.velocity.x = -150;
+    player.animations.play('left');
     if(jumpButton.isDown && player.body.touching.down){
       player.body.velocity.y = -550;
     }
   }else if(cursors.right.isDown){
     player.body.velocity.x = 150;
+    player.animations.play('right');
     if(jumpButton.isDown && player.body.touching.down){
       player.body.velocity.y = -550;
     }
   }else if(jumpButton.isDown && player.body.touching.down){
     player.body.velocity.y = -550;
+  }else{
+    player.animations.play('still');
   }
 }
 
