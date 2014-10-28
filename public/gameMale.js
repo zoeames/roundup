@@ -7,7 +7,7 @@ var player;
 var positions  = [{x:0, y:410, sx:4, sy:1}, {x:480, y:410, sx:4, sy:1}, {x:0, y:275, sx:7, sy:1}, {x:80, y:140, sx:3, sy:4}, {x:640, y:140, sx:3, sy:4},
                   {x:380, y:90, sx:2, sy:4}];
 var positions2 = [{x:20, y:380}, {x: 500, y:380}, {x:20, y:450}, {x:200, y:450}, {x:700, y:450}, {x:20, y:220}, {x:150, y:220}, {x:200, y:110},
-                  {x:500, y:60}, {x:700, y:100}]
+                  {x:500, y:60}, {x:700, y:100}];
 
 var score = 0;
 function preload(){
@@ -49,7 +49,6 @@ function create(){
   player.anchor.set(0.5, 0.5);
   //player.body.collideWorldBounds = true;
   player.body.gravity.y = 900;
-  game.world.wrap(player);
   platforms = game.add.group();
   platforms.enableBody = true;
   platforms.physicsBodyType = Phaser.Physics.ARCADE;
