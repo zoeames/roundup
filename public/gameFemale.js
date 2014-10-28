@@ -16,6 +16,7 @@ var positions2 = [{x:20, y:380}, {x: 500, y:380}, {x:20, y:450}, {x:200, y:450},
 
 function preload(){
   game.load.image('star', 'star-blood.png');
+  game.stage.backgroundColor = '#db12ff'
 }
 
 function create(){
@@ -38,7 +39,7 @@ function create(){
 
   var platformbmd = game.add.bitmapData(80, 16);
   platformbmd.ctx.rect(0, 0, 80, 16);
-  platformbmd.ctx.fillStyle = "#f8a34b";
+  platformbmd.ctx.fillStyle = "#01def8";
   platformbmd.ctx.fill();
 
   player = game.add.sprite(game.world.centerX, game.world.centerY, playerbmd);
