@@ -13,7 +13,7 @@ var countDown = 30;
 var loop = null;
 var score = 0;
 var timer;
-var positions  = [{x:0, y:410, sx:4, sy:1}, {x:480, y:410, sx:4, sy:1}, {x:0, y:275, sx:7, sy:1}, {x:80, y:140, sx:3, sy:4}, {x:640, y:140, sx:3, sy:4},
+var positions  = [{x:0, y:410, sx:3, sy:1}, {x:560, y:410, sx:2, sy:1}, {x:0, y:275, sx:7, sy:1}, {x:80, y:140, sx:3, sy:4}, {x:640, y:140, sx:3, sy:4},
                   {x:380, y:90, sx:2, sy:4}];
 var positions2 = [{x:20, y:380}, {x: 500, y:380}, {x:20, y:450}, {x:200, y:450}, {x:700, y:450}, {x:20, y:220}, {x:150, y:220}, {x:200, y:110},
                   {x:500, y:60}, {x:700, y:100}];
@@ -190,8 +190,8 @@ function moveEnemies(enemy){
 
 function enemyHit(player, enemy){
   hit.play();
-  var x = enemy.x + 80;
-  var y = enemy.y;
+  var x = Math.floor(Math.random() * 700) + 10;
+  var y = 0;
   enemy.kill();
   score += 20;
   emitter.x = enemy.x;

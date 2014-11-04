@@ -13,7 +13,7 @@ var countDown = 30;
 var loop = null;
 var score = 0;
 var timer;
-var positions  = [{x:0, y:410, sx:4, sy:1}, {x:480, y:410, sx:4, sy:1}, {x:0, y:275, sx:7, sy:1}, {x:80, y:140, sx:3, sy:4}, {x:640, y:140, sx:3, sy:4},
+var positions  = [{x:0, y:410, sx:3, sy:1}, {x:560, y:410, sx:3, sy:1}, {x:0, y:275, sx:7, sy:1}, {x:80, y:140, sx:3, sy:4}, {x:640, y:140, sx:3, sy:4},
                   {x:380, y:90, sx:2, sy:4}];
 var positions2 = [{x:20, y:380}, {x: 500, y:380}, {x:20, y:450}, {x:200, y:450}, {x:700, y:450}, {x:20, y:220}, {x:150, y:220}, {x:200, y:110},
                   {x:500, y:60}, {x:700, y:100}];
@@ -87,7 +87,7 @@ function create(){
 
   game.time.events.loop(1000, function(){
     enemies.forEachAlive(function(e){
-      e.body.velocity.x = 115 * Phaser.Math.randomSign();
+      e.body.velocity.x = 100 * Phaser.Math.randomSign();
       if(e.body.velocity.x < 0){
         e.animations.play('left');
       }else{
@@ -97,7 +97,7 @@ function create(){
   }, this);
   game.time.events.loop(1000, function(){
     enemiez.forEachAlive(function(e){
-      e.body.velocity.x = 115 * Phaser.Math.randomSign();
+      e.body.velocity.x = 100 * Phaser.Math.randomSign();
       if(e.body.velocity.x < 0){
         e.animations.play('left');
       }else{
@@ -179,18 +179,18 @@ function moveEnemies(enemy){
     enemy.x = 784;
   }
   if(player.body.velocity.x < 0){
-    enemy.body.velocity.x = -115;
+    enemy.body.velocity.x = -100;
     enemy.animations.play('left');
   }else if(player.body.velocity.x > 0){
-    enemy.body.velocity.x = 115;
+    enemy.body.velocity.x = 100;
     enemy.animations.play('right');
   }
 }
 
 function enemyHit(player, enemy){
   hit.play();
-  var x = enemy.x + 80;
-  var y = enemy.y;
+  var x = Math.floor(Math.random() * 700) + 10;
+  var y = 0;
   enemy.kill();
   score += 20;
   emitter.x = enemy.x;
