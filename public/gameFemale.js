@@ -1,14 +1,19 @@
 var cursors;
 var emitter;
-var gameFemaleState = {preload: preload, create: create, update: update};
+var enemies;
+var enemiez;
+var gameFemaleState = {preload: preload, create: create, update: update, render: render};
+var hit;
 var jumpButton;
+var jump;
+var jump2;
 var platforms;
 var player;
 var countDown = 30;
 var loop = null;
 var score = 0;
 var timer;
-var positions  = [{x:0, y:410, sx:4, sy:1}, {x:480, y:410, sx:4, sy:1}, {x:0, y:275, sx:7, sy:1}, {x:80, y:140, sx:3, sy:4}, {x:640, y:140, sx:3, sy:4},
+var positions  = [{x:0, y:410, sx:3, sy:1}, {x:560, y:410, sx:3, sy:1}, {x:0, y:275, sx:7, sy:1}, {x:80, y:140, sx:3, sy:4}, {x:640, y:140, sx:3, sy:4},
                   {x:380, y:90, sx:2, sy:4}];
 var positions2 = [{x:20, y:380}, {x: 500, y:380}, {x:20, y:450}, {x:200, y:450}, {x:700, y:450}, {x:20, y:220}, {x:150, y:220}, {x:200, y:110},
                   {x:500, y:60}, {x:700, y:100}];
@@ -16,6 +21,9 @@ var positions2 = [{x:20, y:380}, {x: 500, y:380}, {x:20, y:450}, {x:200, y:450},
 
 function preload(){
   game.load.image('peg', 'peg-blood.png');
+  game.load.audio('jump', 'Jump2.wav')
+  game.load.audio('hit', 'Hit_Hurt12.wav')
+  game.load.audio('jump2', 'jump3.wav')
   game.stage.backgroundColor = '#db12ff'
   game.load.spritesheet('femaleHero', 'assets/mains/ladyHero.png', 64, 64, 265);
   game.load.spritesheet('uglyGuy', 'assets/variants/uglyman.png', 64, 64, 265);
@@ -23,28 +31,24 @@ function preload(){
 }
 
 function create(){
+  hit = game.add.audio('hit');
+  jump = game.add.audio('jump');
+  jump2 = game.add.audio('jump2');
   game.physics.startSystem(Phaser.Physics.ARCADE);
   player = game.add.sprite(game.world.centerX, game.world.centerY, 'femaleHero');
   player.animations.add('left', [117, 118, 119, 120, 121, 122, 123, 124, 125], 10, true);
   player.animations.add('right', [143, 144, 145, 146, 147, 148, 149, 150, 151], 10, true);
   player.animations.add('still', [130, 131, 132, 133, 134, 135, 136, 137, 138], 10, true);
-
-  var enemybmd = game.add.sprite(game.world.centerX, game.world.centerY, 'uglyGuy');
-
-  var enemy2bmd = game.add.bitmapData(32, 32);
-  enemy2bmd.ctx.rect(0, 0, 32, 32);
-  enemy2bmd.ctx.fillStyle = "#fd2";
-  enemy2bmd.ctx.fill();
+  game.physics.enable(player, Phaser.Physics.ARCADE);
+  player.anchor.set(0.5, 0.5);
+  player.body.gravity.y = 900;
+  player.body.setSize(32, 50, 0, 5);
 
   var platformbmd = game.add.bitmapData(80, 16);
   platformbmd.ctx.rect(0, 0, 80, 16);
   platformbmd.ctx.fillStyle = "#01def8";
   platformbmd.ctx.fill();
 
-  game.physics.enable(player, Phaser.Physics.ARCADE);
-  player.anchor.set(0.5, 0.5);
-  //player.body.collideWorldBounds = true;
-  player.body.gravity.y = 900;
   platforms = game.add.group();
   platforms.enableBody = true;
   platforms.physicsBodyType = Phaser.Physics.ARCADE;
@@ -61,16 +65,17 @@ function create(){
   enemies = game.add.group();
   enemies.enableBody = true;
   enemies.physicsBodyType = Phaser.Physics.ARCADE;
-  enemies.createMultiple(10, enemybmd);
-  /*positions2.forEach(function(p){
-    var enemy = enemies.getFirstDead();
-    enemy.reset(p.x, p.y);
+  positions2.forEach(function(p){
+    var enemy = enemies.create(p.x, p.y, 'uglyGuy');
+    enemy.anchor.setTo(0.5, 0.5);
     enemy.body.gravity.y = 900;
-  }, this);*/
+    enemy.body.setSize(32, 50, 0, 5);
+    enemy.animations.add('left', [117, 118, 119, 120, 121, 122, 123, 124, 125], 10, true);
+    enemy.animations.add('right', [143, 144, 145, 146, 147, 148, 149, 150, 151], 10, true);
+  }, this);
   enemiez = game.add.group();
   enemiez.enableBody = true;
   enemiez.physicsBodyType = Phaser.Physics.ARCADE;
-  enemiez.createMultiple(10, enemy2bmd);
   emitter = game.add.emitter(0, 0, 15);
   emitter.makeParticles('peg');
   emitter.setYSpeed(-150, 150);
@@ -82,17 +87,30 @@ function create(){
 
   game.time.events.loop(1000, function(){
     enemies.forEachAlive(function(e){
-      e.body.velocity.x = 115 * Phaser.Math.randomSign();
+      e.body.velocity.x = 100 * Phaser.Math.randomSign();
+      if(e.body.velocity.x < 0){
+        e.animations.play('left');
+      }else{
+        e.animations.play('right');
+      }
     }, this);
   }, this);
   game.time.events.loop(1000, function(){
     enemiez.forEachAlive(function(e){
-      e.body.velocity.x = 115 * Phaser.Math.randomSign();
+      e.body.velocity.x = 100 * Phaser.Math.randomSign();
+      if(e.body.velocity.x < 0){
+        e.animations.play('left');
+      }else{
+        e.animations.play('right');
+      }
     }, this);
   }, this);
   game.time.events.loop(1500, function(){
     enemiez.forEachAlive(function(e){
       e.body.velocity.y = 655 * Phaser.Math.randomSign();
+      if(e.body.velocity.y<0){
+        jump2.play();
+      }
     }, this);
   }, this);
 
@@ -137,15 +155,18 @@ function movePlayer(){
     player.animations.play('left');
     if(jumpButton.isDown && player.body.touching.down){
       player.body.velocity.y = -550;
+      jump.play();
     }
   }else if(cursors.right.isDown){
     player.body.velocity.x = 150;
     player.animations.play('right');
     if(jumpButton.isDown && player.body.touching.down){
       player.body.velocity.y = -550;
+      jump.play();
     }
   }else if(jumpButton.isDown && player.body.touching.down){
     player.body.velocity.y = -550;
+    jump.play();
   }else{
     player.animations.play('still');
   }
@@ -158,25 +179,32 @@ function moveEnemies(enemy){
     enemy.x = 784;
   }
   if(player.body.velocity.x < 0){
-    enemy.body.velocity.x = -115;
+    enemy.body.velocity.x = -100;
+    enemy.animations.play('left');
   }else if(player.body.velocity.x > 0){
-    enemy.body.velocity.x = 115;
+    enemy.body.velocity.x = 100;
+    enemy.animations.play('right');
   }
 }
 
 function enemyHit(player, enemy){
-  var x = enemy.x + 80;
-  var y = enemy.y;
+  hit.play();
+  var x = Math.floor(Math.random() * 700) + 10;
+  var y = 0;
   enemy.kill();
   score += 20;
   emitter.x = enemy.x;
   emitter.y = enemy.y;
   emitter.start(true, 600, null, 15);
-  var z = enemiez.getFirstDead();
-  z.reset(x, y);
+  var z = enemiez.create(x, y, 'hotGuy');
+  z.anchor.setTo(0.5, 0.5);
   z.body.gravity.y = 900;
+  z.body.setSize(32, 50, 0, 5);
+  z.animations.add('left', [117, 118, 119, 120, 121, 122, 123, 124, 125], 10, true);
+  z.animations.add('right', [143, 144, 145, 146, 147, 148, 149, 150, 151], 10, true);
 }
 function enemy2Hit(player, enemy){
+  hit.play();
   enemy.kill();
   score += 40;
   emitter.x = enemy.x;
@@ -196,8 +224,11 @@ function updateCounter() {
 
 function gameOver() {
   game.state.start('gameOver');
+  yeah.stop();
 }
-
+function render(){
+  //game.debug.body(player);
+}
 //function updateScore(){
   //scoreText.setText(score);
 //}
