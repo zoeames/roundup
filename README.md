@@ -1,7 +1,15 @@
-## Roundup
+## Gender Roundup
 
 ### About
-A gender based HTML5 Canvas game built with Phaser.io.
+A gender based HTML5 Canvas game built with Phaser.io.  You choose a boy or girl and then gain points by rounding up the attractive members of the opposite sex and avoiding ugly members of the opposite sex.
+
+### Screenshots
+![Image1](https://raw.githubusercontent.com/zoeames/roundup/master/docs/screenshots/roundup.png)
+
+![Image2](https://raw.githubusercontent.com/zoeames/roundup/master/docs/screenshots/roundupaction.png)
+
+![Image3](https://raw.githubusercontent.com/zoeames/roundup/master/docs/screenshots/roundupover.png)
+
 
 ### Features
 - [x] Single Level Game
